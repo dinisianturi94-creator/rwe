@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Questionnaire de repérage des besoins</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #647084;
+      --line: #dfe5ee;
+      --primary: #2457c5;
+      --primary-dark: #163b8c;
+      --soft: #eef4ff;
+      --warning: #fff4d6;
+      --warning-text: #725100;
+      --success: #e9f8ef;
+      --success-text: #166534;
+      --danger: #fff0f0;
+      --danger-text: #9b1c1c;
+      --shadow: 0 12px 30px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.45;
+    }
+
+    header {
+      background: linear-gradient(135deg, #123a8f, #2457c5);
+      color: white;
+      padding: 34px 18px;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.7rem, 3vw, 2.5rem);
+      letter-spacing: 0;
+    }
+
+    header p {
+      max-width: 760px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 1rem;
+    }
+
+    main {
+      padding: 22px 0 46px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-panel {
+      padding: 20px;
+    }
+
+    .section {
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .section-title {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      min-width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.18rem;
+    }
+
+    .section-title p,
+    .hint {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    fieldset {
+      border: 0;
+      margin: 0 0 18px;
+      padding: 0;
+    }
+
+    legend {
+      font-weight: 700;
+      margin-bottom: 9px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 8px;
+    }
+
+    label.choice {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    label.choice:hover {
+      border-color: #b9c8e6;
+      background: #fbfdff;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: var(--primary);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary {
+      background: #e8edf6;
+      color: var(--text);
+    }
+
+    .result-panel {
+      position: sticky;
+      top: 16px;
+      padding: 18px;
+    }
+
+    .result-panel h2 {
+      margin-bottom: 12px;
+    }
+
+    .score {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 8px;
+      background: var(--soft);
+      margin-bottom: 14px;
+    }
+
+    .score strong {
+      font-size: 1.9rem;
+    }
+
+    .progress {
+      height: 9px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #d7e1f5;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--primary);
+      transition: width 0.2s ease;
+    }
+
+    .notice {
+      padding: 12px;
+      border-radius: 8px;
+      margin: 12px 0;
+      font-size: 0.94rem;
+    }
+
+    .notice.warning {
+      background: var(--warning);
+      color: var(--warning-text);
+      border: 1px solid #f5d675;
+    }
+
+    .notice.success {
+      background: var(--success);
+      color: var(--success-text);
+      border: 1px solid #b9e7c8;
+    }
+
+    .domain {
+      border-top: 1px solid var(--line);
+      padding: 13px 0;
+    }
+
+    .domain:first-of-type {
+      border-top: 0;
+    }
+
+    .domain-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .domain h3 {
+      margin: 0;
+      font-size: 0.98rem;
+    }
+
+    .tag {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .tag.priority {
+      background: var(--danger);
+      color: var(--danger-text);
+    }
+
+    .tag.work {
+      background: var(--warning);
+      color: var(--warning-text);
+    }
+
+    .tag.good {
+      background: var(--success);
+      color: var(--success-text);
+    }
+
+    .domain ul,
+    .trainer ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.91rem;
+    }
+
+    .trainer {
+      margin-top: 14px;
+      padding: 13px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .trainer h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .result-panel {
+        position: static;
+      }
+    }
+
+    @media print {
+      header,
+      .actions {
+        display: none;
+      }
+
+      body {
+        background: white;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .form-panel {
+        display: none;
+      }
+
+      .result-panel {
+        box-shadow: none;
+        border: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Questionnaire de repérage des besoins</h1>
+      <p>Pour orienter un jeune vers les bons postes d'une permanence de recherche d'emploi, identifier ses priorités et estimer son niveau d'autonomie.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="layout">
+      <form id="questionnaire" class="panel form-panel">
+        <section class="section">
+          <div class="section-title">
+            <span class="badge">0</span>
+            <div>
+              <h2>Avant tout, dis-moi où tu en es</h2>
+              <p>Ces informations permettent de personnaliser tes recommandations.</p>
+            </div>
+          </div>
+
+          <fieldset>
+            <legend>Quel est ton objectif principal en ce moment ?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="objectif" value="Trouver un emploi"> Trouver un emploi (CDI, CDD)</label>
+              <label class="choice"><input type="radio" name="objectif" value="Trouver une alternance"> Trouver une alternance (apprentissage ou contrat pro)</label>
+              <label class="choice"><input type="radio" name="objectif" value="Trouver un stage"> Trouver un stage</label>
+              <label class="choice"><input type="radio" name="objectif" value="Trouver un service civique ou du bénévolat"> Trouver un service civique ou du bénévolat</label>
+              <label class="choice"><input type="radio" name="objectif" value="Projet non défini"> Je ne sais pas encore, mon projet n'est pas défini</label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Tu as déjà une idée de métier ou de secteur ?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="ideeProjet" value="3" data-label="Projet clair"> Oui, j'ai un projet clair</label>
+              <label class="choice"><input type="radio" name="ideeProjet" value="2" data-label="Pistes à préciser"> J'ai des pistes mais rien de précis</label>
+              <label class="choice"><input type="radio" name="ideeProjet" value="0" data-label="Projet à explorer"> Non, je dois encore explorer les métiers</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="section" data-domain="candidature">
+          <div class="section-title">
+            <span class="badge">1</span>
+            <div>
+              <h2>Je prépare mes outils et ma candidature</h2>
+              <p>CV, lettre de motivation, e-mail, téléphone, outils IA, candidatures spontanées et réponses aux offres.</p>
+            </div>
+          </div>
+
+          <fieldset data-question>
+            <legend>Mon CV est...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="cv" value="0"> Je n'en ai pas encore</label>
+              <label class="choice"><input type="radio" name="cv" value="1"> Je l'ai commencé mais il est incomplet ou non relu</label>
+              <label class="choice"><input type="radio" name="cv" value="2"> Il est à jour mais je ne sais pas s'il est adapté ATS / IA</label>
+              <label class="choice"><input type="radio" name="cv" value="3"> Il est complet, adapté et je le mets à jour régulièrement</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>Ma lettre de motivation ou mon e-mail de candidature...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="lettre" value="0"> Je n'en ai jamais rédigé</label>
+              <label class="choice"><input type="radio" name="lettre" value="1"> J'ai une version générique que j'envoie à tout le monde</label>
+              <label class="choice"><input type="radio" name="lettre" value="2"> Je sais l'adapter mais c'est long et difficile</label>
+              <label class="choice"><input type="radio" name="lettre" value="3"> Je la personnalise facilement pour chaque offre</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>Mes outils numériques de candidature...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="outils" value="0"> Je n'ai pas encore de mail professionnel, modèle ou outil</label>
+              <label class="choice"><input type="radio" name="outils" value="1"> J'ai un mail mais pas de modèle ni d'outils</label>
+              <label class="choice"><input type="radio" name="outils" value="2"> J'ai quelques outils mais je ne les maîtrise pas bien</label>
+              <label class="choice"><input type="radio" name="outils" value="3"> J'utilise CV en ligne, IA, mail professionnel et suivi</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>Pour les candidatures spontanées et les offres...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="spontanees" value="0"> Je ne sais pas comment m'y prendre</label>
+              <label class="choice"><input type="radio" name="spontanees" value="1"> Je postule parfois mais sans méthode claire</label>
+              <label class="choice"><input type="radio" name="spontanees" value="2"> Je cible les offres mais j'ai du mal avec les spontanées</label>
+              <label class="choice"><input type="radio" name="spontanees" value="3"> Je gère les deux types avec un suivi régulier</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="section" data-domain="recherche">
+          <div class="section-title">
+            <span class="badge">2</span>
+            <div>
+              <h2>Je candidate : recherche active</h2>
+              <p>Utilisation des outils de recherche, annuaires, plateformes et tableau de suivi.</p>
+            </div>
+          </div>
+
+          <fieldset data-check-question data-max="5">
+            <legend>Je recherche des offres sur...</legend>
+            <p class="hint">Coche tout ce que tu utilises régulièrement.</p>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="plateformes" value="1"> France Travail</label>
+              <label class="choice"><input type="checkbox" name="plateformes" value="1"> Indeed, Welcome to the Jungle, LinkedIn Jobs</label>
+              <label class="choice"><input type="checkbox" name="plateformes" value="1"> Sites spécialisés : alternance.emploi.gouv, 1jeune1solution...</label>
+              <label class="choice"><input type="checkbox" name="plateformes" value="1"> Annuaires sectoriels ou sites d'entreprises directement</label>
+              <label class="choice"><input type="checkbox" name="plateformes" value="0"> Je ne sais pas vraiment où chercher</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>Ma régularité de recherche...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="regularite" value="0"> Je cherche rarement ou seulement quand j'y pense</label>
+              <label class="choice"><input type="radio" name="regularite" value="1"> Je cherche, mais pas de façon organisée</label>
+              <label class="choice"><input type="radio" name="regularite" value="2"> J'ai une routine mais elle n'est pas encore stable</label>
+              <label class="choice"><input type="radio" name="regularite" value="3"> Je consacre du temps chaque semaine avec un tableau de bord</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="section" data-domain="reseau">
+          <div class="section-title">
+            <span class="badge">3</span>
+            <div>
+              <h2>Je développe mon réseau professionnel</h2>
+              <p>LinkedIn, réseau personnel, réseau professionnel, contacts directs et messages.</p>
+            </div>
+          </div>
+
+          <fieldset data-question>
+            <legend>Mon profil LinkedIn...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="linkedin" value="0"> Je n'ai pas de compte</label>
+              <label class="choice"><input type="radio" name="linkedin" value="1"> J'ai un compte mais il est incomplet ou abandonné</label>
+              <label class="choice"><input type="radio" name="linkedin" value="2"> Il est bien rempli mais je ne sais pas comment l'activer</label>
+              <label class="choice"><input type="radio" name="linkedin" value="3"> Je l'utilise activement : connexions, messages, contenu</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>Mon réseau personnel et professionnel...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="reseauPerso" value="0"> Je n'en parle à personne autour de moi</label>
+              <label class="choice"><input type="radio" name="reseauPerso" value="1"> J'en parle parfois mais sans approche structurée</label>
+              <label class="choice"><input type="radio" name="reseauPerso" value="2"> J'ai mobilisé quelques contacts mais je peux faire mieux</label>
+              <label class="choice"><input type="radio" name="reseauPerso" value="3"> Mon réseau est actif : proches, anciens profs, pros du secteur</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="section" data-domain="information">
+          <div class="section-title">
+            <span class="badge">4</span>
+            <div>
+              <h2>Je m'informe sur le marché et les dispositifs</h2>
+              <p>IA, alternance, stage, réussites, événements emploi, recruteurs, service civique, bénévolat et formation.</p>
+            </div>
+          </div>
+
+          <fieldset data-check-question data-max="7">
+            <legend>Ce que je connais et sais utiliser...</legend>
+            <p class="hint">Coche ce que tu maîtrises vraiment.</p>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="infos" value="1"> Les outils IA pour préparer ma recherche d'emploi</label>
+              <label class="choice"><input type="checkbox" name="infos" value="1"> Le fonctionnement de l'alternance : rythme, rémunération, droits</label>
+              <label class="choice"><input type="checkbox" name="infos" value="1"> Comment trouver un stage et quels sont mes droits</label>
+              <label class="choice"><input type="checkbox" name="infos" value="1"> Les événements emploi : salons, forums, job datings</label>
+              <label class="choice"><input type="checkbox" name="infos" value="1"> Le service civique ou le bénévolat</label>
+              <label class="choice"><input type="checkbox" name="infos" value="1"> Les formations disponibles pour booster mon profil</label>
+              <label class="choice"><input type="checkbox" name="infos" value="1"> Ce que cherchent les recruteurs : process, attentes, critères</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>En général, je me tiens informé(e) de l'actualité emploi...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="veille" value="0"> Pas vraiment, je n'ai pas de sources régulières</label>
+              <label class="choice"><input type="radio" name="veille" value="1"> Parfois, mais de façon aléatoire</label>
+              <label class="choice"><input type="radio" name="veille" value="2"> J'ai quelques sources mais je pourrais aller plus loin</label>
+              <label class="choice"><input type="radio" name="veille" value="3"> Je fais une vraie veille régulière : newsletters, LinkedIn, alertes</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="section" data-domain="entretiens">
+          <div class="section-title">
+            <span class="badge">5</span>
+            <div>
+              <h2>Je prépare mes entretiens</h2>
+              <p>Préparation des entretiens, mises en situation, présentation de soi, stress et questions difficiles.</p>
+            </div>
+          </div>
+
+          <fieldset data-question>
+            <legend>Ma préparation avant un entretien...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="prepaEntretien" value="0"> Je ne sais pas comment me préparer</label>
+              <label class="choice"><input type="radio" name="prepaEntretien" value="1"> Je lis un peu sur l'entreprise mais c'est tout</label>
+              <label class="choice"><input type="radio" name="prepaEntretien" value="2"> Je prépare des questions et révise mon parcours</label>
+              <label class="choice"><input type="radio" name="prepaEntretien" value="3"> Je fais des simulations et je prépare mes exemples concrets</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>Me présenter à l'oral : pitch, "parlez-moi de vous"...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="pitch" value="0"> C'est difficile, je ne sais pas quoi dire</label>
+              <label class="choice"><input type="radio" name="pitch" value="1"> J'ai quelque chose mais ce n'est pas fluide</label>
+              <label class="choice"><input type="radio" name="pitch" value="2"> Je m'en sors mais j'aimerais être plus convaincant(e)</label>
+              <label class="choice"><input type="radio" name="pitch" value="3"> Mon pitch est clair, structuré et adapté au poste visé</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>Gérer le stress et les questions difficiles...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="stress" value="0"> C'est mon gros point faible, le stress me bloque</label>
+              <label class="choice"><input type="radio" name="stress" value="1"> C'est difficile mais je m'adapte tant bien que mal</label>
+              <label class="choice"><input type="radio" name="stress" value="2"> Je gère moyennement, ça dépend des jours</label>
+              <label class="choice"><input type="radio" name="stress" value="3"> Je me sens à l'aise, le stress est sous contrôle</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="section" data-domain="projet">
+          <div class="section-title">
+            <span class="badge">6</span>
+            <div>
+              <h2>Mon projet professionnel</h2>
+              <p>Clarté du projet, exploration des métiers, connaissance de ses atouts. Si le projet n'est pas défini, il doit d'abord être travaillé avec le conseiller.</p>
+            </div>
+          </div>
+
+          <fieldset data-question>
+            <legend>La clarté de mon projet professionnel...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="clarteProjet" value="0"> Je n'ai pas encore de projet défini</label>
+              <label class="choice"><input type="radio" name="clarteProjet" value="1"> J'ai des idées vagues mais rien de construit</label>
+              <label class="choice"><input type="radio" name="clarteProjet" value="2"> Mon projet est en cours de construction avec mon conseiller</label>
+              <label class="choice"><input type="radio" name="clarteProjet" value="3"> Mon projet est défini et je sais exactement où je vais</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>La connaissance de mes compétences et atouts...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="competences" value="0"> Je ne sais pas vraiment ce que je vaux</label>
+              <label class="choice"><input type="radio" name="competences" value="1"> Je connais quelques forces mais j'ai du mal à les formuler</label>
+              <label class="choice"><input type="radio" name="competences" value="2"> Je les connais mais je n'arrive pas toujours à les valoriser</label>
+              <label class="choice"><input type="radio" name="competences" value="3"> Je sais identifier, formuler et valoriser mes compétences</label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend>L'exploration des métiers : critères, ressources, immersion...</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="exploration" value="0"> Je n'ai pas encore exploré les métiers qui m'intéressent</label>
+              <label class="choice"><input type="radio" name="exploration" value="1"> J'ai regardé quelques fiches métier en ligne</label>
+              <label class="choice"><input type="radio" name="exploration" value="2"> J'ai fait quelques recherches et échangé avec des professionnels</label>
+              <label class="choice"><input type="radio" name="exploration" value="3"> J'ai mené une vraie exploration : immersion, entretiens, bénévolat...</label>
+            </div>
+          </fieldset>
+        </section>
+
+        <div class="actions">
+          <button class="primary" type="button" id="calculate">Voir mon bilan</button>
+          <button class="secondary" type="button" id="print">Imprimer / enregistrer en PDF</button>
+          <button class="secondary" type="reset">Réinitialiser</button>
+        </div>
+      </form>
+
+      <aside class="panel result-panel" aria-live="polite">
+        <h2>Ton bilan de repérage</h2>
+        <div id="result">
+          <p class="empty">Réponds au questionnaire puis clique sur "Voir mon bilan". Le résultat indiquera les postes conseillés, les priorités de travail et le niveau d'autonomie.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const domains = {
+      candidature: {
+        title: "Préparer mes outils et ma candidature",
+        recommendations: [
+          "Créer ou améliorer un CV clair, lisible et compatible ATS.",
+          "Rédiger une trame de lettre ou d'e-mail adaptable selon l'offre.",
+          "Préparer une adresse mail professionnelle et un message téléphonique adapté.",
+          "Utiliser l'IA pour améliorer la formulation sans copier-coller sans relecture."
+        ]
+      },
+      recherche: {
+        title: "Je candidate : recherche active",
+        recommendations: [
+          "Identifier les bons sites selon l'objectif : emploi, alternance, stage ou service civique.",
+          "Créer une routine de recherche hebdomadaire.",
+          "Utiliser un tableau de suivi : offre, contact, date, relance, réponse.",
+          "Compléter les jobboards par les annuaires, sites d'entreprises et contacts directs."
+        ]
+      },
+      reseau: {
+        title: "Développer mon réseau",
+        recommendations: [
+          "Créer ou compléter un profil LinkedIn avec photo, titre, expériences et compétences.",
+          "Lister 5 personnes qui peuvent aider : proches, anciens profs, tuteurs, professionnels.",
+          "Préparer un message court pour demander un conseil, une information ou un contact.",
+          "Apprendre à parler de sa recherche de manière simple et professionnelle."
+        ]
+      },
+      information: {
+        title: "M'informer sur le marché",
+        recommendations: [
+          "Comprendre les dispositifs utiles : alternance, stage, service civique, bénévolat, formation.",
+          "Repérer les salons, forums, job datings et événements emploi du territoire.",
+          "Faire une veille avec alertes emploi, newsletters, LinkedIn et sites institutionnels.",
+          "Identifier ce que les recruteurs attendent : motivation, disponibilité, compétences, posture."
+        ]
+      },
+      entretiens: {
+        title: "Préparer mes entretiens",
+        recommendations: [
+          "Comprendre la structure d'un entretien classique.",
+          "Préparer une présentation de 2 minutes : parcours, objectif, points forts.",
+          "Préparer des exemples concrets avec la méthode STAR.",
+          "Faire une simulation et travailler les questions difficiles."
+        ]
+      },
+      projet: {
+        title: "Mon projet professionnel",
+        recommendations: [
+          "Travailler le projet avec le conseiller avant d'aller trop loin dans les candidatures.",
+          "Explorer les métiers avec ONISEP, Mon Orientation en Ligne ou les fiches métiers.",
+          "Clarifier ses critères : rythme, lieu, tâches, contraintes, valeurs, niveau d'étude.",
+          "Faire une immersion, un entretien métier, du bénévolat ou une enquête professionnelle."
+        ]
+      }
+    };
+
+    const form = document.querySelector("#questionnaire");
+    const result = document.querySelector("#result");
+
+    function getRadioValue(name) {
+      const checked = form.querySelector(`input[name="${name}"]:checked`);
+      return checked ? checked.value : "";
+    }
+
+    function scoreRadioQuestion(fieldset) {
+      const checked = fieldset.querySelector("input[type='radio']:checked");
+      return {
+        score: checked ? Number(checked.value) : 0,
+        max: 3,
+        answered: Boolean(checked)
+      };
+    }
+
+    function scoreCheckboxQuestion(fieldset) {
+      const boxes = [...fieldset.querySelectorAll("input[type='checkbox']")];
+      const checked = boxes.filter((box) => box.checked);
+      const positive = checked.filter((box) => Number(box.value) > 0).length;
+      const max = Number(fieldset.dataset.max || boxes.length);
+      const score = Math.min(positive, max) / max * 3;
+      return {
+        score,
+        max: 3,
+        answered: checked.length > 0
+      };
+    }
+
+    function domainScore(section) {
+      const questions = [
+        ...section.querySelectorAll("[data-question]"),
+        ...section.querySelectorAll("[data-check-question]")
+      ];
+      let total = 0;
+      let max = 0;
+      let answered = 0;
+
+      questions.forEach((question) => {
+        const data = question.matches("[data-check-question]")
+          ? scoreCheckboxQuestion(question)
+          : scoreRadioQuestion(question);
+        total += data.score;
+        max += data.max;
+        if (data.answered) answered += 1;
+      });
+
+      const percent = max > 0 ? Math.round((total / max) * 100) : 0;
+      return { total, max, percent, answered, questionCount: questions.length };
+    }
+
+    function levelFromPercent(percent) {
+      if (percent < 35) {
+        return {
+          label: "Prioritaire",
+          className: "priority",
+          autonomy: "Faible autonomie",
+          text: "Besoin d'un accompagnement guidé et concret."
+        };
+      }
+      if (percent < 70) {
+        return {
+          label: "À renforcer",
+          className: "work",
+          autonomy: "Autonomie partielle",
+          text: "Des bases existent, mais une méthode ou une mise en pratique est nécessaire."
+        };
+      }
+      return {
+        label: "Bon niveau",
+        className: "good",
+        autonomy: "Bonne autonomie",
+        text: "Le participant peut surtout optimiser et gagner en efficacité."
+      };
+    }
+
+    function globalLevel(percent) {
+      if (percent < 35) return "Débutant(e) — accompagnement rapproché";
+      if (percent < 70) return "Intermédiaire — autonomie partielle";
+      return "Avancé(e) — grande autonomie";
+    }
+
+    function projectWarning() {
+      const objectif = getRadioValue("objectif");
+      const ideeProjet = Number(getRadioValue("ideeProjet") || 0);
+      const clarteProjet = Number(getRadioValue("clarteProjet") || 0);
+      return objectif === "Projet non défini" || ideeProjet === 0 || clarteProjet <= 1;
+    }
+
+    function usefulResources(objectif) {
+      if (objectif.includes("alternance")) {
+        return ["alternance.emploi.gouv.fr", "1jeune1solution", "CFA et écoles du territoire", "simulateur de rémunération alternance"];
+      }
+      if (objectif.includes("stage")) {
+        return ["1jeune1solution", "sites d'entreprises", "réseau école / organisme de formation", "LinkedIn"];
+      }
+      if (objectif.includes("service civique") || objectif.includes("bénévolat")) {
+        return ["service-civique.gouv.fr", "JeVeuxAider.gouv.fr", "associations locales", "missions d'intérêt général"];
+      }
+      if (objectif.includes("emploi")) {
+        return ["France Travail", "Indeed", "Welcome to the Jungle", "LinkedIn Jobs", "annuaire d'entreprises"];
+      }
+      return ["ONISEP", "Mon Orientation en Ligne", "Immersion Facilitée", "entretiens métiers", "conseiller référent"];
+    }
+
+    function calculate() {
+      const sections = [...form.querySelectorAll("section[data-domain]")];
+      const domainResults = sections.map((section) => {
+        const key = section.dataset.domain;
+        const score = domainScore(section);
+        return {
+          key,
+          ...domains[key],
+          ...score,
+          level: levelFromPercent(score.percent)
+        };
+      });
+
+      const scored = domainResults.filter((domain) => domain.questionCount > 0);
+      const total = scored.reduce((sum, domain) => sum + domain.total, 0);
+      const max = scored.reduce((sum, domain) => sum + domain.max, 0);
+      const globalPercent = max > 0 ? Math.round(total / max * 100) : 0;
+      const objectif = getRadioValue("objectif") || "Non renseigné";
+      const warning = projectWarning();
+      const priorities = domainResults
+        .filter((domain) => domain.percent < 70)
+        .sort((a, b) => a.percent - b.percent);
+      const topPriorities = warning
+        ? [
+            ...priorities.filter((domain) => domain.key === "projet"),
+            ...priorities.filter((domain) => domain.key !== "projet")
+          ].slice(0, 4)
+        : priorities.slice(0, 3);
+      const resources = usefulResources(objectif);
+
+      result.innerHTML = `
+        <div class="score">
+          <span>Objectif : <strong style="font-size:1rem">${objectif}</strong></span>
+          <strong>${globalPercent}%</strong>
+          <div class="progress"><span style="width:${globalPercent}%"></span></div>
+          <span>${globalLevel(globalPercent)}</span>
+        </div>
+
+        <div class="notice ${warning ? "warning" : "success"}">
+          ${warning
+            ? "Projet à clarifier : le club ou la permanence peut aider à repérer les ressources, mais la construction du projet doit être travaillée en priorité avec le conseiller référent."
+            : "Projet suffisamment clair pour avancer dans les ateliers de candidature, recherche active, réseau et entretien."}
+        </div>
+
+        <div class="trainer">
+          <h3>Orientation conseillée</h3>
+          <ul>
+            ${topPriorities.length
+              ? topPriorities.map((domain) => `<li>Aller en priorité au poste : <strong>${domain.title}</strong> (${domain.percent}%).</li>`).join("")
+              : "<li>Le participant peut circuler sur les postes d'optimisation selon son objectif.</li>"}
+          </ul>
+        </div>
+
+        ${domainResults.map((domain) => `
+          <div class="domain">
+            <div class="domain-head">
+              <h3>${domain.title}</h3>
+              <span class="tag ${domain.level.className}">${domain.level.label} · ${domain.percent}%</span>
+            </div>
+            <div class="progress"><span style="width:${domain.percent}%"></span></div>
+            <p class="hint">${domain.level.autonomy} : ${domain.level.text}</p>
+            <ul>
+              ${domain.recommendations.slice(0, domain.percent < 70 ? 4 : 2).map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+        `).join("")}
+
+        <div class="trainer">
+          <h3>Note pour le formateur</h3>
+          <ul>
+            <li>À traiter en priorité : ${topPriorities.length ? topPriorities.map((domain) => domain.title).join(", ") : "optimisation, relance et mise en pratique"}.</li>
+            <li>Autonomie globale : ${globalPercent}% — ${globalLevel(globalPercent)}.</li>
+            <li>Ressources utiles selon l'objectif : ${resources.join(", ")}.</li>
+            ${warning ? "<li>Projet non défini ou fragile : orienter vers un suivi individuel avant les ateliers de candidature trop avancés.</li>" : ""}
+          </ul>
+        </div>
+      `;
+    }
+
+    document.querySelector("#calculate").addEventListener("click", calculate);
+    document.querySelector("#print").addEventListener("click", () => {
+      calculate();
+      window.print();
+    });
+    form.addEventListener("reset", () => {
+      setTimeout(() => {
+        result.innerHTML = `<p class="empty">Réponds au questionnaire puis clique sur "Voir mon bilan". Le résultat indiquera les postes conseillés, les priorités de travail et le niveau d'autonomie.</p>`;
+      }, 0);
+    });
+  </script>
+</body>
+</html>
